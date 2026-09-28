@@ -2,3 +2,4 @@ pymupdf
 pandas
 numpy
 python-dotenv
+pytest
