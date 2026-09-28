@@ -6,6 +6,7 @@ flagged with ``needs_ocr=True`` so a later OCR stage can handle them.
 
 from __future__ import annotations
 
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -49,7 +50,8 @@ def extract_pdf(path: str | Path) -> ExtractedDocument:
     with pymupdf.open(path) as doc:
         pages = []
         for i, page in enumerate(doc, start=1):
-            text = page.get_text("text").strip()
+            # NFKC turns ligatures like "ﬃ" back into normal letters ("ffi")
+            text = unicodedata.normalize("NFKC", page.get_text("text")).strip()
             pages.append(
                 PageText(page_number=i, text=text, needs_ocr=len(text) < MIN_TEXT_CHARS)
             )
